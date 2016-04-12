@@ -1,0 +1,62 @@
+	myFirebaseRef.set({
+	  		title: "Hello World!",
+	  		author: "Firebase",
+	  		location: {
+		    	city: "San Francisco",
+		   		state: "California",
+		    	zip: 94103
+		  	}
+		});
+
+	  	myFirebaseRef.set(
+	  		{
+				"People": [
+				{
+					name: "Jeremy Rans", 
+					email: "jrans@vendasta.com", 
+					meetings: [{
+						date:"2016-08-01", 
+						text: "Talked about cats"
+						},{
+						date:"2016-07-01", 
+						text: "Talked about waterskiing"
+						}
+					]
+				}, 
+
+				{
+					name: "Graham Holtslander",
+					email: "gholtslander@vendasta.com", 
+					meetings:[{
+						date: "20116-06-05", 
+						text: "Talked about Angular 2"}
+					]
+				}]
+			}
+
+			myFirebaseRef.set(
+	  		{
+				"People": [
+				{
+					name: "Jeremy Rans", 
+					email: "jrans@vendasta.com", 
+					meetings: [{
+						date:"2016-08-01", 
+						text: "Talked about cats"
+						},{
+						date:"2016-07-01", 
+						text: "Talked about waterskiing"
+						}
+					]
+				}, 
+
+				{
+					name: "Graham Holtslander",
+					email: "gholtslander@vendasta.com", 
+					meetings:[{
+						date: "20116-06-05", 
+						text: "Talked about Angular 2"}
+					]
+				}]
+			}
+		
