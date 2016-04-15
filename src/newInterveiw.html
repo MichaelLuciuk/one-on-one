@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+	<title> One - One </title>
+
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+	<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+
+<body style="background-color: #81DAF5;">
+	
+	<div class="container" style="color: black; padding-top: 30px;">
+		<center>
+			<h1>One on Ones</h1><br />
+			
+			<form>
+				<div class="dropdown">
+				  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">People<span class="caret"></span></button>
+				  <ul id="list-of-people"class="dropdown-menu" style="margin-left:39%;">
+				    <!-- <li><a href="#">Fred</a></li>
+				    <li><a href="#">Joe</a></li>
+				    <li><a href="#">Bob</a></li> -->
+				  </ul>
+				  <input type="text" name="txtName" id="txtName1" value="" placeholder="Name"/>
+				</div>
+				<br />
+				<input type="text" name="txtDate" id="txtDate1" value="" placeholder="Date (YYYY-MM-DD)">
+				<br /><br />
+				<textarea name="txtInterviewComents" id="textarea1" value="" placeholder="Interveiw Comments" cols="85" rows="8" wrap="soft"></textarea><br /><br />
+				<button type="submit" name="btnSave" onclick="_save(this.form)" value="Save" class="btn btn-primary btn-lg">Save</button>
+				<button type="reset" value="Reset" class="btn btn-primary btn-lg">Reset</button>
+				<a href="index.html"><button type="button" value="Return" class="btn btn-primary btn-lg">Return</button></a>
+			</form>
+
+		</center>	
+	</div>
+
+	<script>
+
+	$(function() {
+		// 	//This executes on page load
+		// 	//TODO: Connect to firebase
+		// 	//TODO: Log out all of the one-on-ones in the database
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com/People");
+		myFirebaseRef.on("child_added", function(snapshot) {
+		var newPeople = snapshot.val();
+		var meetings = newPeople.meetings;
+		var DropDownList = document.getElementById("list-of-people");
+
+			for (var i in meetings) {
+			  	// console.log("text: " + meetings[i].text)
+			  	// console.log("date: " + meetings[i].date)
+			  	// console.log("Name: " + newPeople.name);
+			  	//console.log("Email: " + newPeople.email);
+			  	//var listIdem = ("<a href='#'>" + newPeople.name + "</a>");
+			  	var listIdem = ("<a href='#'><span onclick='personClicked(" + newPeople.name + ")'>" + newPeople.name + "</span></a>");
+			  	//console.log(tableRow);
+			  	var newListIdem = document.createElement('li');
+			  	newListIdem.innerHTML = listIdem;
+			  	DropDownList.appendChild(newListIdem);
+	  		}
+		});
+	});
+
+	function _save(form) {
+
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com");
+
+		//see if thsi person exists
+		var person_id = -1;
+		myFirebaseRef.child("People").once("value", function(snapshot){
+			var people = snapshot.val();
+
+			for (var i in people) {
+				var person = people[i];
+				if (person.name == document.getElementById('txtName1').value) {
+					person_id = i;
+				}
+			}
+
+			if (person_id == -1) {
+				// This person is missing from the list, add them!
+				var ref = myFirebaseRef.child("People").push(
+					{
+						name: document.getElementById('txtName1').value, 
+						meetings: [
+							{
+								date: document.getElementById('txtDate1').value, 
+								text: document.getElementById('textarea1').value
+							}
+						],
+						email:""
+					});
+				console.log(ref);
+			} else {
+				var ref = myFirebaseRef.child("People/" + person_id + "/meetings").push(
+					{
+							
+						date: document.getElementById('txtDate1').value, 
+						text: document.getElementById('textarea1').value,
+							
+					});
+				console.log(ref);
+			}
+
+		}, function (errorObject){
+			console.log("Failed to read the list of people!");
+		});
+
+		alert("Save successful")
+	}
+
+	function personClicked(NewPeople_name) {
+		alert("This is getting fired");
+		document.getElementById('txtName1').value = NewPeople_name;
+	};
+
+	</script>
+
+</body>
+</html>

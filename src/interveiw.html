@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+	<title> One - One </title>
+
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+	<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+
+<body style="background-color: #81DAF5;">
+	
+	<div class="container" style="color: black; padding-top: 30px;">
+		<center>
+			<h1>One on Ones</h1><br />
+			
+			<form>
+				<label id="lblInterviewName" value="" for="name">Name: </label>
+				<span id="name"></span>
+				<br />
+				<label for="date">Date: </label>
+				<span id="date"></span>
+				<br /><br />
+				<label for="interviewComments">Interview comments </label><br /><textarea cols="85" rows="8" id="interview_comments" wrap="soft"></textarea>
+				<br /><br />
+				<button type="button" value="Edit" onclick="_save(this.form)" class="btn btn-primary btn-lg">Save</button>
+				<a href="index.html"><button type="button" class="btn btn-primary btn-lg">Return</button></a>
+			</form>
+
+		</center>	
+	</div>
+
+	<script>
+	$(function() {
+
+		function getQueryVariable(variable){
+	       var query = window.location.search.substring(1);
+	       query = decodeURI(query);
+	       var vars = query.split("&");
+	       for (var i=0; i<vars.length; i++) {
+	               var pair = vars[i].split("=");
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+		};
+
+		var person_id = getQueryVariable("person_id");
+		var meeting_id = getQueryVariable("meeting_id");
+		//var _name = _tempName.replaceAll("%20", " ");
+		//document.getElementById("lblInterviewName").value = _tempName
+
+		var _date = getQueryVariable("date");
+
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com");
+		myFirebaseRef.child("People/" + person_id).once("value", function(snapshot) {
+			var person = snapshot.val();
+			$("#name").text(person.name);
+		});
+		
+		myFirebaseRef.child("People/" + person_id + "/meetings/" + meeting_id).once("value", function(snapshot) {
+			var meeting = snapshot.val();
+			$("#date").text(meeting.date);
+			$("#interview_comments").text(meeting.text);
+		});
+
+		//This executes on page load
+		//TODO: Connect to firebase
+		//TODO: Log out all of the one-on-ones in the database
+		// myFirebaseRef.on("child_added", function(snapshot) {
+		// 	var newPeople = snapshot.val();
+
+		//   	var meetings = newPeople.meetings;
+		//     //var table = document.getElementById("tbl-one-on-one-meetings");
+
+		//     document.getElementById('lblInterviewName').value = ""
+		  // for (var i = 0; i < meetings.length; i++) {
+		  // 	//console.log("text: " + meetings[i].text)
+		  // 	//console.log("date: " + meetings[i].date)
+		  // 	console.log("Name: " + newPeople.name);
+		  // 	//console.log("Email: " + newPeople.email);
+		  // 	var tableRow = ("<th>" + newPeople.name + "</th><th>" + meetings[i].date + "</th><th>" + meetings[i].text + "</th>")
+		  // 	console.log(tableRow);
+		  // 	var newTableRow = document.createElement('tr');
+		  // 	newTableRow.innerHTML = tableRow;
+    	  // 	table.appendChild(newTableRow);
+	    // }
+
+
+	});
+
+	function _save(form) {
+		function getQueryVariable(variable){
+	       var query = window.location.search.substring(1);
+	       query = decodeURI(query);
+	       var vars = query.split("&");
+	       for (var i=0; i<vars.length; i++) {
+	               var pair = vars[i].split("=");
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+		};
+
+		var person_id = getQueryVariable("person_id");
+		var meeting_id = getQueryVariable("meeting_id");
+
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com/People/" + person_id + "/meetings/" + meeting_id);
+		myFirebaseRef.update(
+			{
+				text: document.getElementById('interview_comments').value,					
+			});
+
+		location.reload();
+		alert("Save successful");
+	}
+
+	</script>
+
+</body>
+</html>

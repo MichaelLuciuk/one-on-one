@@ -16,53 +16,86 @@
 
 </head>
 
-<body>
+<body style="background-color: #81DAF5;">
 	
-	<div class="container">
+	<div class="container" style="color: black; padding-top: 30px;">
 		<center>
-			<h1>One on Ones</h1>
-			<table id="tbl-one-on-one-meetings" class="table">
-			  <tr>
-			    <th>Person</th>
-			    <th>Date</th> 
-			    <th>Action</th>
-			  </tr>
-			  
+			<h1>One - One</h1>
+			<div>
+				<form>
+					<div class="dropdown">
+					  <input type="text" name="txtNFilter" id="txtFilter1" value="" placeholder="Search"/>
+					  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button>
+					  <ul id="sort-by"class="dropdown-menu" style="margin-left:53%;">
+					    <li><a href='#'><span onclick="sortByName()">Name</span></a></li>
+					    <li><a href='#'><span onclick="sortByDate()">Date</span></a></li>
+					  </ul>
+					</div>
+				</form><br />
+				<a href="newInterveiw.html"><button type="Submit" value="Add-New" class="btn btn-primary">Add New One on One</button></a><br /><br />
+			</div>
+			<table id="tbl-one-on-one-meetings" class="table table-responsive">
+			  <thead>
+				  <tr>
+				    <th>Name</th>
+				    <th>Date</th> 
+				    <th>Comments</th>
+				    <th>&nbsp;</th>
+				  </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
 			</table>
 		</center>	
 	</div>
 
 	<script>
+
 	$(function() {
 		//This executes on page load
 		//var Firebase = require("firebase");
-		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com/People");
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com");
 		
-		myFirebaseRef.on("child_added", function(snapshot) {
-		  var newPeople = snapshot.val();
-		  var meetings = newPeople.meetings;
+		myFirebaseRef.child("People").on("child_added", function(snapshot) {
+		  var newPerson = snapshot.val();
+		  var meetings = newPerson.meetings;
+		  var person_id = snapshot.key();
 		  var table = document.getElementById("tbl-one-on-one-meetings");
 
-		  for (var i = 0; i < meetings.length; i++) {
-		  	console.log("text: " + meetings[i].text)
-		  	console.log("date: " + meetings[i].date)
-		  	console.log("Name: " + newPeople.name);
-		  	console.log("Email: " + newPeople.email);
-		  	var tableRow = ("<th>" + newPeople.name + "</th><th>" + meetings[i].date + "</th><th>" + meetings[i].text + "</th>")
+		  for (var i in meetings) {
+		  	var meeting_id = i;
+		  	// console.log("text: " + meetings[i].text)
+		  	// console.log("date: " + meetings[i].date)
+		  	// console.log("Name: " + newPerson.name);
+		  	//console.log("Email: " + newPerson.email);
+		  	var tableRow = ("<th>" + newPerson.name + "</th><th>" + meetings[i].date + "</th><th>" + meetings[i].text.substring(0, 25) + "</th> <th><center><form><a href='interveiw.html?person_id=" + person_id + "&meeting_id=" + meeting_id + "'><button type='button' value='Select' class='btn btn-primary btn-sm' style='margin-top: 10px; margin-right: 10px;'>Select</button></a><button type='button' onclick='_delete1(\"" + person_id + "\", \"" + meeting_id + "\")' value='Delete' class='btn btn-primary btn-sm' style='margin-top: 10px;'>Delete</button></form></center></th>");
 		  	console.log(tableRow);
 		  	var newTableRow = document.createElement('tr');
 		  	newTableRow.innerHTML = tableRow;
 		  	table.appendChild(newTableRow);
 		  }
 
-
 		});
-		// var email1 = "test"
-
-
 		//TODO: Connect to firebase
 		//TODO: Log out all of the one-on-ones in the database
 	});
+
+	function _delete1(person_id, meeting_id) {
+		var myFirebaseRef = new Firebase("https://blinding-inferno-7930.firebaseio.com");
+		var ref = myFirebaseRef.child("People/" + person_id + "/meetings/" + meeting_id).remove();
+		location.reload();
+		alert("Delete successful")
+	};
+
+	function sortByName(){
+		alert("Will sort by name.")
+	}	
+
+	function sortByDate(){
+		alert("Will sort by date.")
+	}	
+
 	</script>
+
 </body>
 </html>
